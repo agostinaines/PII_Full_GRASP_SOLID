@@ -14,6 +14,15 @@ namespace Full_GRASP_And_SOLID
         // Cambiado por OCP
         private IList<BaseStep> steps = new List<BaseStep>();
 
+        public Recipe()
+        {
+            Cooked = false;
+        }
+
+        public int CookTime { get; set; }
+        public bool Cooked { get; set; }
+        public CountdownTimerAdapter RecipeTimer { get; set; }
+        private CountdownTimer _countdownTimer;
         public Product FinalProduct { get; set; }
 
         // Agregado por Creator
@@ -61,6 +70,24 @@ namespace Full_GRASP_And_SOLID
             }
 
             return result;
+        }
+
+        public void GetCookTime(IList<BaseStep> recipeSteps)
+        {
+            int cookTime = 0;
+            foreach (var varStep in recipeSteps)
+            {
+                cookTime += varStep.Time;
+            }
+
+            this.CookTime = cookTime * 1000;
+        }
+
+        public void Cook()
+        {
+            this.RecipeTimer = new CountdownTimerAdapter(this._countdownTimer);
+            this.RecipeTimer.RegisterAdapter(this.CookTime, this);
+            this.Cooked = true;
         }
     }
 }
